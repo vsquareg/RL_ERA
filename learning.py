@@ -19,9 +19,9 @@ learning_rate = 0.45
 def train_net(model, params):
 
     filename = params_to_filename(params)
-    observe = 1000  # Number of frames to observe before training.
-    epsilon = 1
-    train_frames = 11000000 # Number of frames to play.
+    observe = 129  # Number of frames to observe before training.
+    epsilon = 0.5
+    train_frames = 50000 # Number of frames to play.
     steps = 0
     batchSize = params['batchSize']
     buffer = params['buffer']
@@ -62,10 +62,11 @@ def train_net(model, params):
             y = state[1]
             qval = model.predict(np.array([x,y]).reshape((1,2)), batch_size=1)
             action = (np.argmax(qval))  # best
+            
 
         # Take action, observe new state and get our treat.
         reward, new_state, term = game_state.frame_step(action)
-        # print(t, reward, action)
+        print("timestep :"+str (t)+"Reward"+str( reward)+ "action"+ str(action)+"state"+str(state))
         # Experience replay storage.
         replay.append((state, action, reward, new_state))
         # print(len(replay))
@@ -85,7 +86,7 @@ def train_net(model, params):
             history = LossHistory()
             model.fit(
                 X_train, y_train, batch_size=batchSize,
-                epoch=1, verbose=0, callbacks=[history]
+                 verbose=0, callbacks=[history]
             )
             loss_log.append(history.losses)
             steps += 1
@@ -96,7 +97,7 @@ def train_net(model, params):
 
         # Decrement epsilon over time.
         if epsilon > 0.1 and t > observe:
-            epsilon -= (1.0/train_frames)
+            epsilon -= (10.0/train_frames)
             print("EPSILON UPDATED", epsilon)
 
         # We died, so update stuff.
@@ -125,6 +126,7 @@ def train_net(model, params):
         # if(keyboard.is_pressed('8')):
         #     print("Reset Goal")
         #     game_state.reset_goal()
+        print(t, reward, action)
 
 
 def log_results(filename, data_collect, loss_log):
@@ -234,7 +236,7 @@ if __name__ == "__main__":
     else:
         nn_param = [128, 128, 128]
         params = {
-            "batchSize": 128,
+            "batchSize": 127,
             "buffer": 50000,
             "nn": nn_param
         }
