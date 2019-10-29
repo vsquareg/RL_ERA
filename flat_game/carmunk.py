@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 
-velocity = 10
+velocity = 50
 
 display_width = 820
 display_height = 520
@@ -158,9 +158,9 @@ class GameState:
             term=0
             reward=-150
             state=(x,y)
-        elif self.botInBuff():
+        elif self.botInDeBuff():
             term=2
-            reward=500
+            reward=50000
             state=(5,515-bot_width)
             x,y=state
         else:
